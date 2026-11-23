@@ -1,7 +1,5 @@
 # HMaps – công cụ địa chính cho MicroStation V8i
 
-> **Chưa có bản phát hành.** Kho này mới được dựng; bộ cài sẽ dùng được khi bản đầu tiên (`HMaps.dll` và `version.json`) được đưa lên.
-
 ## Cài đặt
 1. Tải file [`HMaps-Setup.cmd`](HMaps-Setup.cmd) về máy (nút **Download raw file**).
 2. Nháy đúp để chạy. Nếu Windows hỏi quyền Administrator thì bấm **Yes**.
