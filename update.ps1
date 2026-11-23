@@ -15,6 +15,27 @@ try {
     $raw = "https://raw.githubusercontent.com/$repo/main"
     $wc = New-Object Net.WebClient
     $remote = $wc.DownloadString("$raw/version.json?t=" + [DateTime]::UtcNow.Ticks) | ConvertFrom-Json
+
+    # Menu "HMaps" tren thanh menu (HMaps.dgnlib): cai/cap nhat neu ghi duoc thu muc WorkSpace (khong can admin).
+    if ($remote.menu) {
+        $ws = Join-Path $env:ProgramData 'Bentley\MicroStation V8i (SELECTseries)\WorkSpace\Interfaces\MicroStation\default'
+        $lib = Join-Path $ws 'HMaps.dgnlib'
+        $cur = ''; if (Test-Path $lib) { $cur = (Get-FileHash $lib -Algorithm SHA256).Hash }
+        if ((Test-Path (Split-Path -Parent $ws)) -and $cur -ne $remote.menu.ToUpper()) {
+            try {
+                $tmp = Join-Path $Inst 'HMaps.dgnlib.new'
+                $wc.DownloadFile("$raw/HMaps.dgnlib", $tmp)
+                if ((Get-FileHash $tmp -Algorithm SHA256).Hash -eq $remote.menu.ToUpper()) {
+                    New-Item -ItemType Directory -Force $ws | Out-Null
+                    Copy-Item $tmp $lib -Force
+                    Say "Da cai menu HMaps: $lib"
+                }
+                Remove-Item $tmp -Force -ErrorAction SilentlyContinue
+            }
+            catch { Say "Chua cai duoc menu HMaps (chay lai bo cai): $($_.Exception.Message)" }
+        }
+    }
+
     $local = '0.0.0'
     $vf = Join-Path $Inst 'version.json'
     if (Test-Path $vf) { $local = (Get-Content $vf -Raw | ConvertFrom-Json).version }
